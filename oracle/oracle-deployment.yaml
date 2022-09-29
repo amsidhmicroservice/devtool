@@ -1,0 +1,70 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: oracle-ee-11g
+spec:
+  selector:
+    matchLabels:
+      app: oracle-ee-11g # has to match .spec.template.metadata.labels
+  serviceName: "oracle11g"
+  replicas: 1 # by default is 1
+  template:
+    metadata:
+      labels:
+        app: oracle-ee-11g # has to match .spec.selector.matchLabels
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: oracle
+          image: wnameless/oracle-xe-11g-r2:latest
+          ports:
+            - containerPort: 1521
+              name: oracle
+            - containerPort: 8080
+              name: oracle-web
+
+          env:
+            - name: ORACLE_ALLOW_REMOTE
+              value: "true"
+            - name: ORACLE_PASSWORD_VERIFY
+              value: "false"
+            - name: ORACLE_DISABLE_ASYNCH_IO
+              value: "true"
+            - name: MYSQL_ROOT_USER
+              value: "root"
+            - name: MYSQL_ROOT_PASSWORD
+              value: "secret"
+            - name: MYSQL_DATABASE
+              value: "currency_exchange"
+            - name: TZ
+              value: "Asia/Kolkata"
+
+          volumeMounts:
+            - name: oracle-data
+              mountPath: /mnt/fs/
+  volumeClaimTemplates:
+    - metadata:
+        name: oracle-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 2Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: oracle11g
+  labels:
+    app: oracle-ee-11g
+spec:
+  ports:
+    - name: oracle
+      port: 1521
+    - name: oracle-web
+      port: 8080
+  type: LoadBalancer
+  selector:
+    app: oracle-ee-11g

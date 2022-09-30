@@ -10,9 +10,9 @@ data:
     # all input will come from filebeat, no local logs
     input {
       jdbc {
-        jdbc_validate_connection => true
+        jdbc_validate_connection => true 
         jdbc_driver_library => "/usr/share/logstash/oraclelib/ojdbc.jar"
-        jdbc_driver_class => "Java:oracle.jdbc.drive.OracleDriver"
+        jdbc_driver_class => "Java::oracle.jdbc.driver.OracleDriver"
         jdbc_connection_string => "jdbc:oracle:thin:@oracle11g:1521:XE"
         jdbc_user => "USERDB"
         jdbc_password => "Tiger@123#"
@@ -24,25 +24,26 @@ data:
         clean_run => "false"
       }
     }
+    
     filter {
       aggregate {
         task_id => "%{id}"
         code => "map['id'] = event.get('id')
-                 map['first_name'] = event.get('first_name')
-                 map['surname'] = event.get('last_name')
-                 map['city_name'] = event.get('city')
-                 map['current_address'] = event.get('address')
-                 map['clob_data'] = event.get('data')
-                 map['record_update_time'] = event.get('record_update_time')
-                 event.cancel()"
+                map['first_name'] = event.get('first_name')
+                map['sur_name'] = event.get('last_name')
+                map['city_name'] = event.get('city')
+                map['current_address'] = event.get('address')
+                map['clob_data'] = event.get('data')
+                map['record_update_time'] = event.get('row_update_time')
+                event.cancel()"
         push_previous_map_as_event => true
-        timeout => 30
+        timeout => 30	  
       }
     }
     output {
       elasticsearch {
         action => "index"
-        index => "userdetail-%{+YYYY.MM.dd}"
+        index => "userdetail"
         document_type => "userdetail"
         document_id => "%{id}"
         hosts => [ "http://elasticsearch:9200" ]

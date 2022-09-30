@@ -38,7 +38,7 @@ metadata:
   labels:
     service: elasticsearch
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     component: elasticsearch
   ports:

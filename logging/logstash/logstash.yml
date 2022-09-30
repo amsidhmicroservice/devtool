@@ -34,10 +34,6 @@ spec:
 
             - name: oraclelib
               mountPath: /usr/share/logstash/oraclelib
-              readOnly: true
-
-            - name: logstashdata
-              mountPath: /usr/share/logstash/data
 
       restartPolicy: Always
       volumes:
@@ -54,20 +50,9 @@ spec:
             items:
               - key: logstash.conf
                 path: logstash.conf
-
         - name: oraclelib
           hostPath:
-            path: /usr/share/logstash/oraclelib
-
-        - name: logstashdata
-          hostPath:
-            path: /usr/share/logstash/data
-
-      securityContext:
-        fsGroup: 1099
-        runAsGroup: 1099
-        runAsUser: 1099
-
+            path:   /run/desktop/mnt/host/e/oraclelib
 
 ---
 apiVersion: v1

@@ -19,6 +19,8 @@ spec:
           value: http://elasticsearch:9200
         - name: XPACK_SECURITY_ENABLED
           value: "true"
+        - name: TZ
+          value: Asia/Kolkata
         ports:
         - containerPort: 5601
           name: http
@@ -33,7 +35,7 @@ metadata:
   labels:
     service: kibana
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     run: kibana
   ports:

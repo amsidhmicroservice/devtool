@@ -21,6 +21,9 @@ spec:
         - containerPort: 9200
           name: http
           protocol: TCP
+        volumeMounts:
+          - name: date-config
+            mountPath: /usr/share/zoneinfo/Asia/Calcutta
         resources:
           limits:
             cpu: 500m
@@ -28,6 +31,11 @@ spec:
           requests:
             cpu: 500m
             memory: 4Gi
+
+      volumes:
+        - name: date-config
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Calcutta
 
 ---
 

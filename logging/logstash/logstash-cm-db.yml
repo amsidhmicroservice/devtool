@@ -16,10 +16,12 @@ data:
         jdbc_connection_string => "jdbc:oracle:thin:@oracle11g:1521:XE"
         jdbc_user => "USERDB"
         jdbc_password => "Tiger@123#"
-        statement => "SELECT * FROM USERINFO WHERE row_update_time > :sql_last_value"
+        statement => "SELECT * FROM USERINFO WHERE row_update_time > :sql_last_value  AND row_update_time <= CURRENT_TIMESTAMP ORDER BY row_update_time ASC"
+        record_last_run => true
         use_column_value => true
         tracking_column_type => "timestamp"
         tracking_column => "row_update_time"
+        last_run_metadata_path => "/usr/share/logstash/lastrunmetadata/conf_last_run.log"
         schedule => "* * * * * *"
         clean_run => "false"
       }
@@ -37,19 +39,26 @@ data:
                 map['record_update_time'] = event.get('row_update_time')
                 event.cancel()"
         push_previous_map_as_event => true
-        timeout => 30	  
       }
+    
+      mutate {
+          remove_field => [ "tags" ]
+      }
+    
     }
     output {
+      stdout {
+        codec => json_lines
+      }
+      file {
+        path => "/usr/share/logstash/output/output.txt"
+        codec => json_lines
+      }
       elasticsearch {
         action => "index"
-        index => "userdetail"
+        index => "userdetail-%{+YYYY.MM.dd}"
         document_type => "userdetail"
         document_id => "%{id}"
         hosts => [ "http://elasticsearch:9200" ]
-      }
-    
-      stdout {
-        codec => json_lines
       }
     }

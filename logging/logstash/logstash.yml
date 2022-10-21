@@ -23,6 +23,8 @@ spec:
           env:
             - name: ES_HOSTS
               value: "http://elasticsearch:9200"
+            - name: TZ
+              value: Asia/Kolkata
           resources: { }
           volumeMounts:
             - name: config-volume
@@ -34,6 +36,14 @@ spec:
 
             - name: oraclelib
               mountPath: /usr/share/logstash/oraclelib
+
+            - name: lastrunmetadata
+              mountPath: /usr/share/logstash/lastrunmetadata
+
+            - name: fileoutput
+              mountPath: /usr/share/logstash/output
+            - name: inputlogfilepath
+              mountPath: /usr/share/logstash/input/logs
 
       restartPolicy: Always
       volumes:
@@ -54,6 +64,17 @@ spec:
           hostPath:
             path:   /run/desktop/mnt/host/e/oraclelib
 
+        - name: lastrunmetadata
+          hostPath:
+            path: /run/desktop/mnt/host/e/lastrunmetadata
+
+        - name: fileoutput
+          hostPath:
+            path: /run/desktop/mnt/host/e/logstash/output
+
+        - name: inputlogfilepath
+          hostPath:
+            path: /run/desktop/mnt/host/e/logstash/logfiles
 ---
 apiVersion: v1
 kind: Service

@@ -115,7 +115,7 @@ select * from graphqldb.author;]]></console>
           <database value="XE" />
           <type value="USER_PASSWORD" />
           <user value="USERDB" />
-          <deprecated-pwd value="VGlnZXJAMTIzIw==" />
+          <deprecated-pwd value="" />
         </database>
         <properties>
           <auto-commit value="false" />

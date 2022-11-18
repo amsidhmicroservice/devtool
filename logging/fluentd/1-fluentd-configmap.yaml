@@ -1,0 +1,58 @@
+#@include file-fluent.conf
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluentd-config
+data:
+  fluent.conf: |-
+    ################################################################
+    # This source gets all logs from local docker host
+    #@include pods-kind-fluent.conf
+    #@include pods-fluent.conf
+    #@include file-fluent.conf
+    @include pods-currency-conversion.conf
+    @include pods-currency-exchange.conf
+    @include elastic-fluent.conf
+  pods-currency-conversion.conf: |-
+    <source>
+      @type tail
+      read_from_head true
+      path /var/log/containers/currency-conversion.log
+      pos_file /var/log/fluentd-containers-currency-conversion.log.pos
+      tag currency-conversion
+      <parse>
+        @type json
+      </parse>
+    </source>
+
+  pods-currency-exchange.conf: |-
+    <source>
+      @type tail
+      read_from_head true
+      path /var/log/containers/currency-exchange.log
+      pos_file /var/log/fluentd-containers-currency-exchange.log.pos
+      tag currency-exchange
+      <parse>
+        @type json
+      </parse>
+    </source>  
+
+  elastic-fluent.conf: |-
+    <match currency-conversion>
+      @type elasticsearch
+      host elasticsearch
+      port 9200
+      logstash_format true
+      logstash_prefix fluentd-currency-conversion
+      logstash_dateformat %d.%m.%Y
+    </match>
+    
+    <match currency-exchange>
+      @type elasticsearch
+      host elasticsearch
+      port 9200
+      logstash_format true
+      logstash_prefix fluentd-currency-exchange
+      logstash_dateformat %d.%m.%Y
+    </match>

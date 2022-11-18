@@ -27,7 +27,7 @@ spec:
         image: aimvector/fluentd-demo
         env:
           - name:  FLUENT_ELASTICSEARCH_HOST
-            value: "elasticsearch.elastic-kibana"
+            value: "elasticsearch"
           - name:  FLUENT_ELASTICSEARCH_PORT
             value: "9200"
         resources:
@@ -44,6 +44,9 @@ spec:
         - name: varlibdockercontainers
           mountPath: /var/lib/docker/containers
           readOnly: true
+        - name: inputlogfilepath
+          mountPath: /var/log/containers/
+
       terminationGracePeriodSeconds: 30
       volumes:
       - name: fluentd-config
@@ -55,3 +58,6 @@ spec:
       - name: varlibdockercontainers
         hostPath:
           path: /var/lib/docker/containers
+      - name: inputlogfilepath
+        hostPath:
+          path: /run/desktop/mnt/host/e/logstash/logfiles

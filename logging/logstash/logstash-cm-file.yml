@@ -18,7 +18,172 @@ data:
     filter {
       json {
         source => "message"
+        target => "json"
       }
+    
+      if ("" in [json][request-tracking][correlationId]) {
+        mutate {
+          add_field => {
+                  "api_correlationId" => "%{[json][request-tracking][correlationId]}"
+          }
+        }
+      }
+    
+      if ("" in [json][request-tracking][span_id]) {
+        mutate {
+          add_field => {
+                  "api_span_id" => "%{[json][request-tracking][span_id]}"
+          }
+        }
+      }
+    
+      if ("" in [json][request-tracking][parent_span_id]) {
+        mutate {
+          add_field => {
+                  "api_parent_span_id" => "%{[json][request-tracking][parent_span_id]}"
+          }
+        }
+      }
+    
+      if ("" in [json][request-tracking][exported]) {
+        mutate {
+          add_field => {
+                  "api_exported" => "%{[json][request-tracking][exported]}"
+          }
+        }
+      }
+    
+      if ("" in [json][logger]) {
+        mutate {
+          add_field => {
+                  "api_logger" => "%{[json][logger]}"
+          }
+        }
+      }
+    
+      if ("" in [json][version]) {
+        mutate {
+          add_field => {
+                  "api_version" => "%{[json][version]}"
+          }
+        }
+      }
+    
+      if ("" in [json][service-name]) {
+        mutate {
+          add_field => {
+                  "api_service_name" => "%{[json][service-name]}"
+          }
+        }
+      }
+    
+      if ("" in [json][severity]) {
+        mutate {
+          add_field => {
+                  "api_severity" => "%{[json][severity]}"
+          }
+        }
+      }
+    
+      if ("" in [json][logMessage]) {
+        mutate {
+          add_field => {
+                  "api_logMessage" => "%{[json][logMessage]}"
+          }
+        }
+      }
+    
+      if ("" in [json][log_class_info][log_source_class]) {
+        mutate {
+          add_field => {
+                  "api_log_source_class" => "%{[json][log_class_info][log_source_class]}"
+          }
+        }
+      }
+    
+      if ("" in [json][log_class_info][log_source_method]) {
+        mutate {
+          add_field => {
+                  "api_log_source_method" => "%{[json][log_class_info][log_source_method]}"
+          }
+        }
+      }
+    
+      if ("" in [json][log_class_info][log_source_line]) {
+        mutate {
+          add_field => {
+                  "api_log_source_line" => "%{[json][log_class_info][log_source_line]}"
+          }
+        }
+      }
+    
+      if ("" in [json][thread]) {
+        mutate {
+          add_field => {
+                  "api_thread" => "%{[json][thread]}"
+          }
+        }
+      }
+    
+      if ("" in [json][exception]) {
+        mutate {
+          add_field => {
+                  "api_exception" => "%{[json][exception]}"
+          }
+        }
+      }
+    
+      if ("" in [json][exception-hash]) {
+        mutate {
+          add_field => {
+                  "api_exception-hash" => "%{[json][exception-hash]}"
+          }
+        }
+      }
+    
+      if ("" in [host]) {
+        mutate {
+          add_field => {
+                  "api_hostname" => "%{[host]}"
+          }
+        }
+      }
+    
+      if ("" in [path]) {
+        mutate {
+          add_field => {
+                  "api_log_file_path" => "%{[path]}"
+          }
+        }
+      }
+    
+      if ("" in [json][RemoteServiceUrl]) {
+        mutate {
+          add_field => {
+                  "api_RemoteServiceUrl" => "%{[json][RemoteServiceUrl]}"
+          }
+        }
+      }
+    
+      if ([json][TimeTaken]) {
+        mutate {
+          add_field => {
+                  "api_TimeTaken" => "%{[json][TimeTaken]}"
+          }
+        }
+       
+      }
+        
+        mutate{
+          remove_field => [ "message","json", "tags" ]
+        }
+    	
+    	mutate {
+          convert => {
+              "api_TimeTaken" =>"integer"
+          }
+        } 
+      
     }
     
     output {
@@ -30,9 +195,8 @@ data:
         codec => json_lines
       }
       elasticsearch {
-        action => "index"
-        index => "currency-service-%{+YYYY.MM.dd}"
-        document_type => "currency-service"
+        index => "logstash-%{api_service_name}-%{+dd.MM.YYYY}"
         hosts => [ "http://elasticsearch:9200" ]
+        
       }
     }

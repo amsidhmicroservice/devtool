@@ -80,6 +80,6 @@ spec:
         - name: postgres
           port: 5432
           nodePort: 30432
-       type: NodePort
+       type: LoadBalancer
        selector:
         app: postgres

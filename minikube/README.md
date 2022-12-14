@@ -6,5 +6,14 @@ choco install minikube
 
   Use following command:
 
-   minikube start --cpus 4 --memory 5120 --mount-string="C:/Users/amsid/tempdata:/data" --mount
+minikube start --cpus 4 --memory 4000mb
+
+
+
+
+minikube service <service-name> --url
+minikube service --all
+minikube service --all --url
+
+
    

@@ -15,14 +15,12 @@ spec:
         app: logstash
     spec:
       containers:
-        - image: docker.elastic.co/logstash/logstash:7.8.0
+        - image: docker.elastic.co/logstash/logstash:8.5.3
           name: logstash
           ports:
             - containerPort: 25826
             - containerPort: 5044
           env:
-            - name: ES_HOSTS
-              value: "http://elasticsearch:9200"
             - name: TZ
               value: Asia/Kolkata
           resources: { }
@@ -66,7 +64,7 @@ spec:
 
         - name: lastrunmetadata
           hostPath:
-            path: /run/desktop/mnt/host/e/lastrunmetadata
+            path: /run/desktop/mnt/host/e/logstash/lastrunmetadata
 
         - name: fileoutput
           hostPath:

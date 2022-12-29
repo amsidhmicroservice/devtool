@@ -6,12 +6,12 @@ data:
   logstash.yml: |
     http.host: "0.0.0.0"
     path.config: /usr/share/logstash/pipeline
+
   logstash.conf: |
     # all input will come from filebeat, no local logs
     input {
-      file {
-        path => ["/usr/share/logstash/input/logs/*.log"]
-        start_position 	=> "beginning"
+      beats {
+        port => 5044
       }
     }
     
@@ -171,32 +171,31 @@ data:
                   "api_TimeTaken" => "%{[json][TimeTaken]}"
           }
         }
-       
+    
       }
-        
+    
         mutate{
           remove_field => [ "message","json", "tags" ]
         }
-    	
+    
     	mutate {
           convert => {
               "api_TimeTaken" =>"integer"
           }
         } 
-      
+    
     }
     
+    
     output {
-      stdout {
-        codec => json_lines
-      }
       file {
         path => "/usr/share/logstash/output/output.txt"
         codec => json_lines
       }
       elasticsearch {
         index => "logstash-%{api_service_name}-%{+dd.MM.YYYY}"
-        hosts => [ "http://elasticsearch:9200" ]
-        
+        #hosts => [ "http://elasticsearch:9200" ]
+        cloud_id => "MyElasticDeployment:dXMtY2VudHJhbDEuZ2NwLmNsb3VkLmVzLmlvOjQ0MyQ4ODIwZWFlYmE4MGQ0NDRhYmE1MDJiMGIxNTBhNzk5ZiQ0NmNhNjZkMWI5ZDk0OTY1YjhhMDEzYzM3NjA3ZmVmYQ=="
+        cloud_auth => "elastic:Kxz8tvWj720DbWPFNFlJLlUZ"
       }
     }

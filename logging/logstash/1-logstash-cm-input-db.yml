@@ -7,7 +7,6 @@ data:
     http.host: "0.0.0.0"
     path.config: /usr/share/logstash/pipeline
   logstash.conf: |
-    # all input will come from filebeat, no local logs
     input {
       jdbc {
         jdbc_validate_connection => true 
@@ -31,13 +30,13 @@ data:
       aggregate {
         task_id => "%{id}"
         code => "map['id'] = event.get('id')
-                map['first_name'] = event.get('first_name')
-                map['sur_name'] = event.get('last_name')
-                map['city_name'] = event.get('city')
-                map['current_address'] = event.get('address')
-                map['clob_data'] = event.get('data')
-                map['record_update_time'] = event.get('row_update_time')
-                event.cancel()"
+                 map['first_name'] = event.get('first_name')
+                 map['sur_name'] = event.get('last_name')
+                 map['city_name'] = event.get('city')
+                 map['current_address'] = event.get('address')
+                 map['clob_data'] = event.get('data')
+                 map['record_update_time'] = event.get('row_update_time')
+                 event.cancel()"
         push_previous_map_as_event => true
       }
     

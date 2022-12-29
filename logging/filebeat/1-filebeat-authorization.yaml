@@ -1,0 +1,45 @@
+# To allow Filebeat to see the logs from container in other namespaces, we must define a Service Account, a Cluster Role and then bind them together.
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: filebeat
+  labels:
+    app: filebeat
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+      - namespaces
+      - pods
+      - services
+
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: filebeat
+roleRef:
+  kind: ClusterRole
+  name: filebeat
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+  - kind: ServiceAccount
+    name: filebeat
+    namespace: default
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: filebeat
+  labels:
+    app: filebeat

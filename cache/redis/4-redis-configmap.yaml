@@ -406,7 +406,7 @@ data:
     # better to configure a special user to use with replication, and specify the
     # masteruser configuration as such:
     #
-    #masteruser master
+    masteruser master
     #
     # When masteruser is specified, the replica will authenticate against its
     # master using the new AUTH form: AUTH <username> <password>.
@@ -683,7 +683,7 @@ data:
     # Redis ACL users are defined in the following format:
     #
     #   user <username> ... acl rules ...
-    #
+    user userredis allcommands allkeys on >Redis@123
     # For example:
     #
     #   user worker +@list +@connection ~jobs:* on >ffa9203c493aa99

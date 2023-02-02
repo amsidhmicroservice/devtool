@@ -1,0 +1,31 @@
+---
+apiVersion: apm.k8s.elastic.co/v1
+kind: ApmServer
+metadata:
+  name: quickstart
+spec:
+  version: 6.8.23
+  count: 1
+  elasticsearchRef:
+    name: quickstart
+  podTemplate:
+    spec:
+      automountServiceAccountToken: true
+  config:
+    concurrent_requests: 5
+    rum:
+      enabled: true
+    queue.mem.events: 4096
+    max_procs: 4
+    output:
+      elasticsearch:
+        password: "14QAAgKXg8j82T88LA09NX2S"
+        username: "elastic"
+        protocol: "http"
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: true
+    service:
+      spec:
+        type: LoadBalancer

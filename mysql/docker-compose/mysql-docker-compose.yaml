@@ -1,0 +1,25 @@
+#docker-compose -f postgres-docker-compose.yaml up
+version: "3.7"
+services:
+  mysql-db:
+    image:  mysql:5.7
+    environment:
+      #Create DB
+      MYSQL_DATABASE: customerdb
+      # Use postgres/secret user/password credentials
+      MYSQL_PASSWORD: tiger
+      MYSQL_ROOT_PASSWORD: tiger
+      MYSQL_USER: scoot
+      # enforce UTC timezone
+      TZ: UTC
+    volumes:
+      - vertx-customer-mysql-data-local:/var/lib/mysql
+    ports:
+      - 3306:3306
+
+# permanent storage of data.
+# > docker volume rm postgres_vertx-stock-broker-data-local
+volumes:
+  vertx-customer-mysql-data-local:
+
+

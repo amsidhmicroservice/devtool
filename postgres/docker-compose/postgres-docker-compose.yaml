@@ -1,4 +1,4 @@
-#docker-compose -f postgres-docker-compose.yaml up
+#docker-compose -f postgres-docker-compose.yaml up -d
 version: "3.7"
 services:
   postgres-db:

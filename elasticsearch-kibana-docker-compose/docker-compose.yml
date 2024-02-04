@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  es-node1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.8.23
+    container_name: es-node1
+    environment:
+      - node.name=node-1
+      - discovery.zen.ping.unicast.hosts=es-node2,es-node3
+      - discovery.zen.minimum_master_nodes=2
+      - cluster.name=elasticsearch-cluster
+    ports:
+      - "9200:9200"
+    
+
+  es-node2:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.8.23
+    container_name: es-node2
+    environment:
+      - node.name=node-2
+      - discovery.zen.ping.unicast.hosts=es-node1,es-node3
+      - discovery.zen.minimum_master_nodes=2
+      - cluster.name=elasticsearch-cluster
+      - transport.port=9301
+    ports:
+      - "9201:9200"
+  
+  es-node3:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.8.23
+    container_name: es-node3
+    environment:
+      - node.name=node-3
+      - discovery.zen.ping.unicast.hosts=es-node1,es-node2
+      - discovery.zen.minimum_master_nodes=2
+      - cluster.name=elasticsearch-cluster
+    ports:
+      - "9202:9200"
+ 

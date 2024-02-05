@@ -89,6 +89,18 @@ spec:
             storage: 5Gi
 
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: elasticsearch-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: hostpath
+  resources:
+    requests:
+      storage: 5Gi
+---
 kind: Service
 apiVersion: v1
 metadata:

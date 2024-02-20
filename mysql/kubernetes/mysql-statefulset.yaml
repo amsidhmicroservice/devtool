@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysqldb
+  labels:
+    app: mysql
+spec:
+  serviceName: mysqldb
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mysql
+      tier: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+        tier: mysql
+    spec:
+      initContainers:
+        - name: init-mysql
+          image: mysql:5.7
+          imagePullPolicy: Always
+          command:
+            - "bash"
+            - "-c"
+            - |
+              set -ex
+              # Initialize MySQL data directory
+              mysql_install_db --user=mysql --ldata=/var/lib/mysql
+              chown -R mysql:mysql /var/lib/mysql
+          volumeMounts:
+            - name: mysql-persistent-storage
+              mountPath: /var/lib/mysql
+      containers:
+        - name: mysql
+          image: mysql:5.7
+          imagePullPolicy: Always
+          command:
+            - "mysqld"
+            - "--ignore-db-dir=lost+found"
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: tiger
+            - name: MYSQL_USER
+              value: scoot
+            - name: MYSQL_PASSWORD
+              value: tiger
+            - name: MYSQL_DATABASE
+              value: currency_exchange_db
+          ports:
+            - containerPort: 3306
+              name: mysql
+          volumeMounts:
+            - name: mysql-persistent-storage
+              mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+    - metadata:
+        name: mysql-persistent-storage
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: hostpath
+        resources:
+          requests:
+            storage: 5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysqldb
+  labels:
+    app: mysql
+spec:
+  ports:
+    - name: "3306"
+      port: 3306
+      targetPort: 3306
+  selector:
+    app: mysql
+    tier: mysql
+  type: LoadBalancer
